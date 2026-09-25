@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Dulz | Strm — Premium Apps</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+ --yellow:#ffe000;--yellow2:#ffbd00;--cyan:#74f6ff;--bg:#d8d8d8;
+ --ink:#111;--muted:#666;--danger:#e53935;--white:#fff;
+}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:
+ radial-gradient(circle at 15% 0%,#fff7 0 8%,transparent 28%),
+ linear-gradient(135deg,#ececec,#cfcfcf);color:var(--ink);min-height:100vh}
+button,input{font:inherit}
+button{user-select:none}
+.page{display:none;min-height:100vh;padding:24px 16px 125px}
+.page.active{display:block;animation:pageIn .35s ease}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+header{text-align:center;margin:4px 0 25px}
+.logo{display:inline-flex;align-items:center;gap:10px}
+.logoMark{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,#111,#333);
+display:grid;place-items:center;color:var(--yellow);font-weight:1000;font-size:20px;
+box-shadow:0 5px 12px #0004,inset 0 0 0 2px #ffffff22}
+header h1{margin:0;font-size:29px;font-weight:1000;letter-spacing:-1px}
+header p{margin:5px 0 0;color:#555;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:1000px;margin:auto}
+.card{position:relative;background:linear-gradient(150deg,#ffe900,#ffd400);
+border-radius:20px;padding:12px 12px 18px;box-shadow:4px 5px 0 #a08f00,0 12px 22px #0002;
+cursor:pointer;overflow:hidden;transition:transform .16s,box-shadow .16s}
+.card:before{content:"";position:absolute;inset:-50% auto auto -30%;width:120%;height:70px;
+background:#fff5;transform:rotate(-10deg);pointer-events:none}
+.card:hover{transform:translateY(-4px);box-shadow:5px 8px 0 #a08f00,0 18px 28px #0003}
+.card:active{transform:scale(.96);box-shadow:2px 3px 0 #a08f00}
+.poster{width:100%;aspect-ratio:1/1;border-radius:16px;background:#fff;display:flex;align-items:center;
+justify-content:center;overflow:hidden;box-shadow:0 4px 7px #0004}
+.poster img{width:100%;height:100%;object-fit:cover;display:block}
+.poster span{font-size:24px;color:#777;font-weight:700}
+.name{font-size:20px;font-weight:1000;margin:16px 9px 6px;word-break:break-word}
+.price{font-size:21px;font-weight:1000;margin:0 9px}
+.empty{text-align:center;background:#ffffffaa;border-radius:18px;padding:35px 20px;color:#555;grid-column:1/-1;
+box-shadow:inset 0 0 0 1px #fff8}
+.nav{position:fixed;left:14px;right:14px;bottom:14px;height:78px;border-radius:24px;
+background:rgba(116,246,255,.88);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+display:flex;align-items:center;justify-content:space-between;padding:0 27px;
+box-shadow:0 5px 0 #128e93,0 12px 28px #0004,inset 0 1px 0 #fff9;z-index:20}
+.nav:after{content:"";position:absolute;left:50%;top:9px;bottom:9px;width:1px;background:#ffffff77}
+.nav button{position:relative;border:0;background:transparent;width:58px;height:58px;border-radius:18px;
+display:grid;place-items:center;cursor:pointer;transition:.2s;z-index:1}
+.nav button:after{content:"";position:absolute;inset:3px;border-radius:16px;background:#ffffff22;opacity:0;transform:scale(.7);transition:.2s}
+.nav button:hover:after,.nav button:focus:after{opacity:1;transform:scale(1)}
+.nav button:active{transform:scale(.82) rotate(-3deg)}
+.nav svg{width:39px;height:39px;filter:drop-shadow(0 3px 2px #0004)}
+.nav .adminIcon svg{width:38px;height:38px}
+.panel{max-width:680px;margin:auto}
+.box{background:#ffffffeb;border-radius:22px;padding:20px;box-shadow:0 8px 22px #0002,inset 0 0 0 1px #fff;
+margin-bottom:18px}
+.box h2{margin:0 0 15px;font-size:21px}
+input[type=text],input[type=password]{width:100%;padding:14px 15px;border:2px solid #ddd;border-radius:13px;
+outline:none;background:#fff;transition:.2s}
+input:focus{border-color:#e5c700;box-shadow:0 0 0 4px #ffe00033}
+.btn{border:0;border-radius:14px;padding:13px 18px;background:#111;color:#fff;font-weight:900;cursor:pointer;
+transition:transform .14s,filter .14s;box-shadow:0 3px 0 #0005}
+.btn.yellow{background:linear-gradient(135deg,#ffe900,#ffc800);color:#111}
+.btn.red{background:#e53935}
+.btn:active{transform:translateY(2px) scale(.96);box-shadow:none}
+.drop{border:3px dashed #aaa;border-radius:17px;padding:25px;text-align:center;background:#fafafa;cursor:pointer;
+transition:.2s}
+.drop.drag{background:#fff4a0;border-color:#111;transform:scale(1.01)}
+.preview{width:100%;max-height:230px;object-fit:contain;border-radius:12px;margin-top:12px;display:none;background:#eee}
+.formgrid{display:grid;gap:12px}
+.admin-list{display:grid;gap:12px}
+.admin-item{display:flex;gap:12px;align-items:center;background:#f3f3f3;border-radius:15px;padding:10px}
+.admin-thumb{width:70px;height:70px;border-radius:11px;object-fit:cover;background:#fff;flex:none}
+.admin-info{flex:1;min-width:0}
+.admin-info b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:20px;z-index:50;
+animation:fade .2s ease}
+.modal.show{display:flex}
+.modalbox{background:#fff;width:min(430px,100%);border-radius:23px;padding:22px;box-shadow:0 20px 55px #0008;
+animation:pop .22s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:none}}
+.modalbox h2{margin-top:0}
+.hidden{display:none!important}
+.notice{padding:12px;border-radius:12px;background:#fff4a0;margin-top:12px;font-size:14px}
+.toast{position:fixed;left:50%;bottom:108px;transform:translate(-50%,20px);opacity:0;pointer-events:none;
+background:#111;color:#fff;padding:12px 17px;border-radius:999px;z-index:100;font-weight:800;transition:.25s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:420px){
+ .grid{gap:14px}.card{padding:9px 9px 15px}.name{font-size:18px;margin-top:13px}.price{font-size:19px}
+ .nav{height:72px;border-radius:22px;padding:0 21px}.nav button{width:54px;height:54px}
+}
+@media(min-width:700px){.page{padding-left:30px;padding-right:30px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+
+<section id="home" class="page active">
+<header>
+  <div class="logo">
+    <div class="logoMark">DS</div>
+    <h1>Dulz | Strm</h1>
+  </div>
+  <p>Premium Apps &amp; Digital Products</p>
+</header>
+<div id="productGrid" class="grid"></div>
+</section>
+
+<section id="admin" class="page">
+<header>
+  <div class="logo"><div class="logoMark">DS</div><h1>Admin Panel</h1></div>
+  <p>Kelola poster promosi</p>
+</header>
+<div class="panel">
+  <div id="adminContent"></div>
+</div>
+</section>
+
+<nav class="nav" aria-label="Navigasi">
+  <button type="button" onclick="goHome()" aria-label="Home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#ffe000" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+      <path fill="#ffe000" d="M3 10.8 12 3l9 7.8v9.1a1.7 1.7 0 0 1-1.7 1.7h-5.1v-6.2H9.8v6.2H4.7A1.7 1.7 0 0 1 3 19.9z"/>
+    </svg>
+  </button>
+  <button class="adminIcon" onclick="openAdminLogin()" aria-label="Admin">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#ffe000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path fill="#ffe000" d="M12 2.8 19 5v5.1c0 5.1-3.1 9.1-7 11.1-3.9-2-7-6-7-11.1V5z"/>
+      <path stroke="#111" d="M9.2 12.2 11 14l3.8-4"/>
+    </svg>
+  </button>
+</nav>
+<div id="toast" class="toast"></div>
+
+<div id="loginModal" class="modal">
+ <div class="modalbox">
+   <h2>🔐 Masuk Admin</h2>
+   <p>Masukkan kode admin untuk melanjutkan.</p>
+   <input id="codeInput" type="password" inputmode="numeric" placeholder="Masukkan kode">
+   <div id="loginError" class="notice hidden">Kode salah.</div>
+   <div style="display:flex;gap:10px;margin-top:14px">
+    <button class="btn yellow" onclick="login()">Masuk</button>
+    <button class="btn" onclick="closeLogin()">Batal</button>
+   </div>
+ </div>
+</div>
+
+<div id="editModal" class="modal">
+ <div class="modalbox">
+   <h2 id="editTitle">Edit Poster</h2>
+   <div class="formgrid">
+    <input id="editName" type="text" placeholder="Nama APK">
+    <input id="editPrice" type="text" placeholder="Rp 0000">
+    <input id="editImage" type="file" accept="image/*">
+    <img id="editPreview" class="preview" alt="Preview">
+   </div>
+   <div style="display:flex;gap:10px;margin-top:15px">
+    <button class="btn yellow" onclick="saveEdit()">Simpan</button>
+    <button class="btn" onclick="closeEdit()">Batal</button>
+   </div>
+ </div>
+</div>
+
+<script>
+const ADMIN_CODE="81318322011";
+const WA_NUMBER="6281318327641";
+
+/* =========================================================
+   DULZ CLOUD DATABASE
+   Isi 2 nilai ini dari Supabase:
+   Project URL  -> https://xxxxx.supabase.co
+   Publishable/anon key -> key dari Project Settings > API
+   Poster yang ditambah admin akan tersimpan online dan
+   otomatis muncul di HP pembeli/orang lain.
+   ========================================================= */
+const DULZ_CONFIG={
+  // Sudah dikonfigurasi untuk project Supabase kamu.
+  // Gunakan publishable/anon key, bukan service_role.
+  SUPABASE_URL:"https://sgmcvktptgfjpsqcceri.supabase.co",
+  SUPABASE_KEY:"sb_publishable_0j1XzmDnLuzNtGgNlrDQNQ_X4aMMQwH",
+  TABLE:"posters"
+};
+
+/* SQL sekali saja di Supabase SQL Editor:
+create table if not exists public.posters (
+  id text primary key,
+  name text not null,
+  price text not null,
+  image text,
+  created_at timestamptz not null default now()
+);
+alter table public.posters enable row level security;
+create policy "public read" on public.posters for select to anon using (true);
+create policy "public insert" on public.posters for insert to anon with check (true);
+create policy "public update" on public.posters for update to anon using (true) with check (true);
+create policy "public delete" on public.posters for delete to anon using (true);
+*/
+
+let posters=[];
+let editId=null, selectedImage="";
+let cloudReady=false;
+
+function cloudConfigured(){
+  return DULZ_CONFIG.SUPABASE_URL.startsWith("https://")
+    && DULZ_CONFIG.SUPABASE_URL.includes(".supabase.co")
+    && DULZ_CONFIG.SUPABASE_KEY
+    && !DULZ_CONFIG.SUPABASE_KEY.startsWith("ISI_");
+}
+
+function sbHeaders(extra={}){
+  return Object.assign({
+    "apikey":DULZ_CONFIG.SUPABASE_KEY,
+    "Authorization":"Bearer "+DULZ_CONFIG.SUPABASE_KEY,
+    "Content-Type":"application/json"
+  },extra);
+}
+
+async function cloudRequest(path,options={}){
+  if(!cloudConfigured()) throw new Error("Database belum dikonfigurasi.");
+  const res=await fetch(DULZ_CONFIG.SUPABASE_URL+"/rest/v1/"+path,{
+    ...options,headers:sbHeaders(options.headers||{})
+  });
+  if(!res.ok){
+    const msg=await res.text().catch(()=> "");
+    throw new Error(msg||("HTTP "+res.status));
+  }
+  if(res.status===204)return null;
+  return res.json();
+}
+
+async function loadPosters(){
+  try{
+    if(!cloudConfigured()){
+      // Fallback hanya untuk preview lokal. Ini TIDAK dibagikan ke HP lain.
+      const raw=localStorage.getItem("dulz_strm_posters_local");
+      const parsed=raw?JSON.parse(raw):[];
+      posters=Array.isArray(parsed)?parsed:[];
+      renderHome();
+      return;
+    }
+    const data=await cloudRequest(
+      DULZ_CONFIG.TABLE+"?select=id,name,price,image&order=created_at.desc"
+    );
+    posters=Array.isArray(data)?data:[];
+    renderHome();
+    renderAdminList();
+  }catch(e){
+    console.error(e);
+    renderHome();
+    showToast("Gagal mengambil poster online.");
+  }
+}
+
+async function savePosterOnline(p){
+  const data=await cloudRequest(DULZ_CONFIG.TABLE,{
+    method:"POST",
+    headers:{"Prefer":"return=minimal"},
+    body:JSON.stringify(p)
+  });
+  return data;
+}
+
+async function updatePosterOnline(p){
+  return cloudRequest(
+    DULZ_CONFIG.TABLE+"?id=eq."+encodeURIComponent(p.id),
+    {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({name:p.name,price:p.price,image:p.image})
+    }
+  );
+}
+
+async function deletePosterOnline(id){
+  return cloudRequest(
+    DULZ_CONFIG.TABLE+"?id=eq."+encodeURIComponent(id),
+    {method:"DELETE",headers:{"Prefer":"return=minimal"}}
+  );
+}
+
+function saveLocalFallback(){
+  try{
+    localStorage.setItem("dulz_strm_posters_local",JSON.stringify(posters));
+    renderHome();
+    return true;
+  }catch(e){
+    showToast("Penyimpanan browser penuh.");
+    return false;
+  }
+}
+
+function save(){
+  return saveLocalFallback();
+}function money(v){return String(v||"").startsWith("Rp")?v:"Rp "+String(v||"0").replace(/^Rp\\s*/,"");}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+
+function renderHome(){
+ const grid=document.getElementById("productGrid");
+ if(!posters.length){grid.innerHTML='<div class="empty">Belum ada poster. Silakan tambah poster melalui halaman admin.</div>';return}
+ grid.innerHTML=posters.map(p=>`
+ <article class="card" onclick="order('${p.id}')">
+  <div class="poster">${p.image?`<img src="${p.image}" alt="">`:"<span>Poto</span>"}</div>
+  <div class="name">${escapeHtml(p.name)}</div>
+  <div class="price">${escapeHtml(p.price)}</div>
+ </article>`).join("");
+}
+function order(id){
+ const p=posters.find(x=>x.id===id);
+ if(!p)return;
+ const text=`Halo Admin Dulz 👋
+
+Saya ingin order aplikasi berikut:
+
+📱 Nama APK: ${p.name}
+💰 Harga: ${p.price}
+
+Mohon info cara pembayaran dan proses ordernya ya Admin. Terima kasih 🙏`;
+ const url=`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
+ window.open(url,"_blank","noopener");
+}
+function goHome(){
+ const home=document.getElementById("home"),admin=document.getElementById("admin");
+ if(home)home.classList.add("active");
+ if(admin)admin.classList.remove("active");
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function openAdminLogin(){
+ const modal=document.getElementById("loginModal");
+ if(!modal)return;
+ modal.classList.add("show");
+ setTimeout(()=>document.getElementById("codeInput").focus(),100);
+}
+function closeLogin(){document.getElementById("loginModal").classList.remove("show");document.getElementById("loginError").classList.add("hidden");document.getElementById("codeInput").value=""}
+function login(){
+ if(document.getElementById("codeInput").value===ADMIN_CODE){
+ closeLogin();showAdmin();showToast("Berhasil masuk ke Admin");
+}else{
+ document.getElementById("loginError").classList.remove("hidden");
+ document.getElementById("codeInput").select();
+}
+}
+function showAdmin(){
+ document.getElementById("home").classList.remove("active");
+ document.getElementById("admin").classList.add("active");
+ renderAdmin();window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderAdmin(){
+ const c=document.getElementById("adminContent");
+ if(!c)return;
+ c.innerHTML=`
+ <div class="box">
+  <h2>➕ Tambah Poster Promosi</h2>
+  <div class="formgrid">
+   <label class="drop" id="dropArea">
+    <b>📷 Upload Foto Poster</b><br><small>Tap untuk pilih foto atau drag & drop</small>
+    <input id="addImage" type="file" accept="image/*" class="hidden">
+    <img id="addPreview" class="preview" alt="Preview">
+   </label>
+   <input id="addName" type="text" placeholder="Nama APK">
+   <input id="addPrice" type="text" placeholder="Rp 0000">
+   <button class="btn yellow" onclick="addPoster()">Konfirmasi &amp; Tambah Poster</button>
+  </div>
+  <div class="notice">Poster disimpan ke database online Supabase, sehingga semua HP yang membuka website ini dapat melihat poster yang sama.</div>
+ </div>
+ <div class="box">
+  <h2>🗂 Kelola Poster</h2>
+  <div id="adminList" class="admin-list"></div>
+ </div>
+ <button class="btn" onclick="goHome()">← Kembali ke Halaman Utama</button>
+ <button class="btn" style="margin-top:10px" onclick="goHome();showToast('Keluar dari Admin')">Keluar Admin</button>
+ `;
+ setupUpload();
+ renderAdminList();
+}
+function setupUpload(){
+ const input=document.getElementById("addImage"),drop=document.getElementById("dropArea"),preview=document.getElementById("addPreview");
+ input.addEventListener("change",e=>readImage(e.target.files[0],preview));
+ ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag")}));
+ ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag")}));
+ drop.addEventListener("drop",e=>{const f=e.dataTransfer.files && e.dataTransfer.files[0];if(f)readImage(f,preview);});
+}
+function readImage(file,preview,callback){
+ if(!file||!file.type||!file.type.startsWith("image/")){showToast("File harus berupa gambar.");return}
+ if(file.size>6*1024*1024){showToast("Foto maksimal 6 MB.");return}
+ const r=new FileReader();
+ r.onload=()=>{preview.src=r.result;preview.style.display="block";if(callback)callback(r.result)};
+ r.onerror=()=>showToast("Gagal membaca foto.");
+ r.readAsDataURL(file);
+}
+
+function compressImage(dataUrl,maxSide=1100,quality=.82){
+ return new Promise(resolve=>{
+  const img=new Image();
+  img.onload=()=>{
+   const scale=Math.min(1,maxSide/Math.max(img.width,img.height));
+   const c=document.createElement("canvas");
+   c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));
+   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+   resolve(c.toDataURL("image/jpeg",quality));
+  };
+  img.onerror=()=>resolve(dataUrl);
+  img.src=dataUrl;
+ });
+}
+
+async function addPoster(){
+  const name=document.getElementById("addName").value.trim();
+  const price=document.getElementById("addPrice").value.trim();
+  const file=document.getElementById("addImage").files[0];
+
+  if(!name||!price){alert("Isi Nama APK dan Harga terlebih dahulu.");return}
+
+  if(!cloudConfigured()){
+    showToast("Database belum dikonfigurasi.");
+    return;
+  }
+
+  const finish=async image=>{
+    try{
+      const p={
+        id:Date.now().toString(),
+        name,
+        price:money(price),
+        image:image||""
+      };
+      await savePosterOnline(p);
+      posters.unshift(p);
+      renderHome();
+      renderAdmin();
+      showToast("Poster berhasil ditambahkan ke semua HP.");
+    }catch(e){
+      console.error(e);
+      showToast("Gagal menyimpan poster online.");
+    }
+  };
+
+  if(file){
+    readImage(file,document.getElementById("addPreview"),async data=>{
+      const compressed=await compressImage(data);
+      await finish(compressed);
+    });
+  }else{
+    await finish("");
+  }
+}
+
+function renderAdminList(){
+ const list=document.getElementById("adminList");
+ if(!posters.length){list.innerHTML="<div class='empty'>Belum ada poster.</div>";return}
+ list.innerHTML=posters.map(p=>`
+ <div class="admin-item">
+  ${p.image?`<img class="admin-thumb" src="${p.image}">`:`<div class="admin-thumb" style="display:flex;align-items:center;justify-content:center">Poto</div>`}
+  <div class="admin-info"><b>${escapeHtml(p.name)}</b><span>${escapeHtml(p.price)}</span></div>
+  <div class="actions">
+   <button class="btn yellow" onclick="openEdit('${p.id}')">Edit</button>
+   <button class="btn red" onclick="deletePoster('${p.id}')">Hapus</button>
+  </div>
+ </div>`).join("");
+}
+function openEdit(id){
+ const p=posters.find(x=>x.id===id);if(!p)return;
+ editId=id;selectedImage=p.image||"";
+ document.getElementById("editName").value=p.name;
+ document.getElementById("editPrice").value=p.price;
+ const pr=document.getElementById("editPreview");
+ if(p.image){pr.src=p.image;pr.style.display="block"}else pr.style.display="none";
+ document.getElementById("editModal").classList.add("show");
+ document.getElementById("editImage").onchange=e=>{const f=e.target.files[0];if(f)readImage(f,pr,data=>selectedImage=data)};
+}
+function closeEdit(){document.getElementById("editModal").classList.remove("show");editId=null}
+async function saveEdit(){
+  const p=posters.find(x=>x.id===editId);
+  if(!p)return;
+
+  const old={...p};
+  p.name=document.getElementById("editName").value.trim()||p.name;
+  p.price=money(document.getElementById("editPrice").value.trim()||p.price);
+  if(selectedImage) p.image=await compressImage(selectedImage);
+
+  try{
+    if(!cloudConfigured()) throw new Error("Database belum dikonfigurasi.");
+    await updatePosterOnline(p);
+    closeEdit();
+    renderHome();
+    renderAdmin();
+    showToast("Poster berhasil diedit online.");
+  }catch(e){
+    Object.assign(p,old);
+    console.error(e);
+    showToast("Gagal menyimpan perubahan online.");
+  }
+}
+
+async function deletePoster(id){
+  const p=posters.find(x=>x.id===id);
+  if(!p)return;
+  if(!confirm(`Hapus poster "${p.name}"?`))return;
+
+  try{
+    if(!cloudConfigured()) throw new Error("Database belum dikonfigurasi.");
+    await deletePosterOnline(id);
+    posters=posters.filter(x=>x.id!==id);
+    renderHome();
+    renderAdminList();
+    showToast("Poster dihapus dari semua HP.");
+  }catch(e){
+    console.error(e);
+    showToast("Gagal menghapus poster online.");
+  }
+}
+
+function showToast(message){
+ const t=document.getElementById("toast");
+ if(!t)return;
+ t.textContent=message;t.classList.add("show");
+ clearTimeout(window.__toastTimer);
+ window.__toastTimer=setTimeout(()=>t.classList.remove("show"),2200);
+}
+document.getElementById("codeInput").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+loadPosters();
+</script>
+</body>
+</html>
